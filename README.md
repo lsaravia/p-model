@@ -1,6 +1,6 @@
 ## p-model
 
-Generation of a 2D Multinomial Multiplicative Process
+Generation of a 2D Multinomial Multiplicative Process 
 
 Described in  Martinez VJ et al. 1990 Astrophysical Journal 357: 50–610
 and also in Feder J. 1988 Fractals (Ney York: Plenun Press).
