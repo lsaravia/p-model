@@ -9,6 +9,7 @@ Used in an ecological framework by Laurie H, Perrier E (2010) A multifractal mod
 
 The parameter are four probabilities p1 p2 p3 p4, the number of iterations (iter) and the output file name. The size of the image is given by 2^iter.
 
+The *.sed files are output examples.
 
 License
 =======
