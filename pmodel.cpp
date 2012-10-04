@@ -8,8 +8,17 @@
 #include "smattpl.h"
 #include "RWFile.h"
 #include "randlib.h"
+#include "ran.h"
+
 
 using namespace std;
+
+class Urand : public Ranf1 {
+	int n;
+	public:
+	Urand(int nn){ n = nn;}
+	int operator()(){return int64() % (n+1);} // entre 0 y n 
+	};
 
 int main(int argc, char * argv[])
 {
@@ -28,10 +37,13 @@ int main(int argc, char * argv[])
 	long po,po1;
 	RWFile file;
 
-	int rndSeed = time(NULL);
-	setall(rndSeed,rndSeed+1);
+//	int rndSeed = time(NULL);
+//	setall(rndSeed,rndSeed+1);
+    Urand ran(1);
+
 	// ranf(); 
 
+//		return (ran.int64() % (num+1)); // between 0 and num inclusive 
 	
 	int pMax=atoi(argv[5]);
 
@@ -85,8 +97,7 @@ int main(int argc, char * argv[])
 					
 					// ** Modelo sin azar ***
 					// pAct(r,s)=pPre(i,j)*pOri(r%2,s%2);
-					pAct(r,s)=pPre(i,j)*pOri(ignuin(0,1),ignuin(0,1));
-
+					pAct(r,s)=pPre(i,j)*pOri(ran(),ran());
 					}
 			}
 

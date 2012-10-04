@@ -21,7 +21,7 @@ I_DIRS=-I../ -I.. -I../../randlib/src -I../CaNew
 #CFLAGS = -O3 -Wall -Ic:/cpp/fortify -Ic:/cpp/canew -DGRAPHICS -DFORTIFY -fexternal-templates 
 CXXFLAGS = -g -Wall $(I_DIRS) $(X11INCS)  $(SDLDEFS) $(P_DEFS)
 
-O = pmodel.o RWFile.o linpack.o randlib.o com.o
+O = pmodel.o RWFile.o 
 
 L = -lm 
 
@@ -37,14 +37,8 @@ clean:
 # DEPENDENCIES
 all:
 
-linpack.o : linpack.c 
+RWFile.o: RWFile.cpp RWFile.h 
 
-randlib.o : randlib.c 
-
-com.o : com.c 
-
-RWFile.o: RWFile.cpp RWFile.h
-
-pmodel.o: pmodel.cpp 
+pmodel.o: pmodel.cpp makefile
 
 
