@@ -7,7 +7,6 @@
 #include <algorithm> 
 #include "smattpl.h"
 #include "RWFile.h"
-#include "randlib.h"
 #include "ran.h"
 
 
@@ -17,18 +16,25 @@ class Urand : public Ranf1 {
 	int n;
 	public:
 	Urand(int nn){ n = nn;}
-	int operator()(){return int64() % (n+1);} // entre 0 y n 
+	int operator()(){return int64() % (n);} // entre 0 y n 
 	};
+
+
+// random generator function:
+ptrdiff_t myrandom (ptrdiff_t i) { Urand ran(i); return ran();}
+
+// pointer object to it:
+ptrdiff_t (*p_myrandom)(ptrdiff_t) = myrandom;
 
 int main(int argc, char * argv[])
 {
-	if( argc < 6)
+	if( argc < 7)
 	{
 		cerr << "Multinomial Multiplicative Process" << endl;
 		cerr << "p-model Martinez VJ et al. 1990 Astrophysical Journal 357: 50–610"<< endl;
 		cerr << "Feder J. 1988 Fractals (Ney York: Plenun Press)" << endl << endl;
 
-		cerr << "Usage: pmodel p0 p1 p2 p3 iter outputFile" << endl;
+		cerr << "Usage: pmodel p0 p1 p2 p3 iter outputFile random=0/1" << endl;
 		        
 		exit(1);
 	}
@@ -37,16 +43,14 @@ int main(int argc, char * argv[])
 	long po,po1;
 	RWFile file;
 
-//	int rndSeed = time(NULL);
-//	setall(rndSeed,rndSeed+1);
-    Urand ran(1);
+    Urand ran(2); // Entre 0 y 1
 
-	// ranf(); 
-
-//		return (ran.int64() % (num+1)); // between 0 and num inclusive 
+    // return (ran.int64() % (num+1)); // between 0 and num inclusive 
 	
 	int pMax=atoi(argv[5]);
-
+	bool rndEval = true;
+	if( argc==8 && atoi(argv[7])==0)  rndEval=false;
+	 
 	simplmat <double> pOri;
 	simplmat <double> pPre;
 	simplmat <double> pAct;
@@ -62,9 +66,9 @@ int main(int argc, char * argv[])
 	int pos[4]={1,2,3,4};
 	vector<int> posV(pos, pos+4);
 	
-	srand ( unsigned ( time (NULL) ) );
+	//srand ( unsigned ( time (NULL) ) );
 	
-	random_shuffle( posV.begin(),posV.end());
+	random_shuffle( posV.begin(),posV.end(),p_myrandom);
 	for(int i=0; i<posV.size(); ++i)
         cout<<posV[i]<<' ';
 	
@@ -94,10 +98,11 @@ int main(int argc, char * argv[])
 					{
 					//kk=pPre(i,j);
 					//kk1= pPre(r%2,s%2);
-					
-					// ** Modelo sin azar ***
-					// pAct(r,s)=pPre(i,j)*pOri(r%2,s%2);
-					pAct(r,s)=pPre(i,j)*pOri(ran(),ran());
+
+					if( rndEval)
+						pAct(r,s)=pPre(i,j)*pOri(ran(),ran());
+					else
+						pAct(r,s)=pPre(i,j)*pOri(r%2,s%2); 	// ** Modelo sin azar ***
 					}
 			}
 
