@@ -34,12 +34,12 @@ int main(int argc, char * argv[])
 		cerr << "p-model Martinez VJ et al. 1990 Astrophysical Journal 357: 50–610"<< endl;
 		cerr << "Feder J. 1988 Fractals (Ney York: Plenun Press)" << endl << endl;
 
-		cerr << "Usage: pmodel p0 p1 p2 p3 iter outputFile random=0/1" << endl;
-		        
+		cerr << "Usage: pmodel p0 p1 p2 p3 iter outputFile type=F|R|S" << endl;
+		cerr << "type=F: Fixed order  R: random without reposition  S:random with reposition" << endl;		        
 		exit(1);
 	}
 
-	int i,j,r,s,p;
+	int i,j,r,s,p,kk;
 	long po,po1;
 	RWFile file;
 
@@ -48,8 +48,8 @@ int main(int argc, char * argv[])
     // return (ran.int64() % (num+1)); // between 0 and num inclusive 
 	
 	int pMax=atoi(argv[5]);
-	bool rndEval = true;
-	if( argc==8 && atoi(argv[7])==0)  rndEval=false;
+	char rndEval = 'S';
+	if( argc==8 )  rndEval=toupper(argv[7][0]);
 	 
 	simplmat <double> pOri;
 	simplmat <double> pPre;
@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
 	p=1;
     po=pow(2,p);
     po1=pow(2,p+1);
-	pOri.resize(po,po,0.0);
+	pOri.resize(2,2,0.0);
 	pPre.resize(po,po,0.0);
 	pAct.resize(po1,po1,0.0);
 
@@ -66,16 +66,14 @@ int main(int argc, char * argv[])
 	int pos[4]={1,2,3,4};
 	vector<int> posV(pos, pos+4);
 	
-	//srand ( unsigned ( time (NULL) ) );
-	
 	random_shuffle( posV.begin(),posV.end(),p_myrandom);
 	for(int i=0; i<posV.size(); ++i)
         cout<<posV[i]<<' ';
 	
-	pOri(0,0)=atof(argv[posV[0]]);
-	pOri(0,1)=atof(argv[posV[1]]);
-	pOri(1,0)=atof(argv[posV[2]]);
-	pOri(1,1)=atof(argv[posV[3]]);
+	pOri(0)=atof(argv[posV[0]]);
+	pOri(1)=atof(argv[posV[1]]);
+	pOri(2)=atof(argv[posV[2]]);
+	pOri(3)=atof(argv[posV[3]]);
 
 	pPre(0,0)=pOri(0,0);
 	pPre(0,1)=pOri(0,1);
@@ -92,29 +90,38 @@ int main(int argc, char * argv[])
 				int finr=(i+1)*2;
 				int inis=j*2;
 				int fins=(j+1)*2;
-			
-				for(r=inir;r<finr;r++)
-					for(s=inis;s<fins;s++)
-					{
-					//kk=pPre(i,j);
-					//kk1= pPre(r%2,s%2);
+				switch(rndEval)
+				{
+					case 'F':
+						for(r=inir;r<finr;r++)
+							for(s=inis;s<fins;s++)
+							{
+								pAct(r,s)=pPre(i,j)*pOri(r%2,s%2); 	// ** Modelo sin azar ***
+							}
+						break;
 
-					if( rndEval)
-						pAct(r,s)=pPre(i,j)*pOri(ran(),ran());
-					else
-						pAct(r,s)=pPre(i,j)*pOri(r%2,s%2); 	// ** Modelo sin azar ***
-					}
+					case 'R':
+						random_shuffle( posV.begin(),posV.end(),p_myrandom);
+						kk=0;
+						for(r=inir;r<finr;r++)
+							for(s=inis;s<fins;s++)
+							{
+								pAct(r,s)=pPre(i,j)*pOri(posV[kk]-1);
+								kk++;
+							}
+						break;
+					default:
+						for(r=inir;r<finr;r++)
+							for(s=inis;s<fins;s++)
+							{
+								pAct(r,s)=pPre(i,j)*pOri(ran(),ran()); 	// ** Con reposición **
+							}
+						break;
+				}
 			}
 
 		}
 
-/*		for(i=0;i<po1;i++)
-		{
-			for(j=0;j<po1;j++)
-				cout << pAct(i,j) << "\t";
-			cout << endl;
-		}
-*/
 	    po=pow(2,p);
 	    po1=pow(2,p+1);
 
@@ -129,16 +136,5 @@ int main(int argc, char * argv[])
 	}
 	file.WriteSeed(argv[6], pPre, "BI");
 	
-	/*cout << po << "\t" << po << endl;
-	cout << "BI" << endl;
-	
-	for(i=0;i<po;i++)
-	{
-		for(j=0;j<po;j++)
-			cout << pPre(i,j) << "\t";
-		cout << endl;
-	}
-	cout << endl << endl;
-	*/
 	return 0;
 }
