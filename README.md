@@ -7,9 +7,22 @@ and also in Feder J. 1988 Fractals (Ney York: Plenun Press).
 
 Used in an ecological framework by Laurie H, Perrier E (2010) A multifractal model for spatial variation in species richness. Ecological Complexity 7: 32–35.
 
-The parameter are four probabilities p1 p2 p3 p4, the number of iterations (iter) and the output file name. The size of the image is given by 2^iter.
+The model is invoqued using:
+
+pmodel p0 p1 p2 p3 iter outputFile type=F|R|S
+
+The parameter are:
+ - Four probabilities p1 p2 p3 p4.
+ - The number of iterations (iter). 
+ - The output file name. The size of the image is given by 2^iter.
+ - The type is the way of choosing the probabilities in each step
+   F: Fixed order  R: random without reposition  S:random with
+   reposition
+
 
 The *.sed files are output examples.
+
+The pmodel.r file is an R script to plot the sed files using lattice.
 
 License
 =======
