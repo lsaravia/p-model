@@ -11,8 +11,7 @@ The parameter are four probabilities p1 p2 p3 p4, the number of iterations (iter
 
 The *.sed files are output examples.
 
-The pmodel.r file is an R script to plot the sed files using lattice package. For multifractal spectrum it 
-uses mfSBA software <https://github.com/lsaravia/mfsba>
+The pmodel.r file is an R script to plot the sed files using lattice package. For multifractal spectra estimation it uses mfSBA software <https://github.com/lsaravia/mfsba>. The files t* s* f* a* are mfSBA output files with the multifractal spectra.
 
 
 License
