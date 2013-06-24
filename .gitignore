@@ -1,0 +1,6 @@
+*.png
+*.o
+pmodel
+*.zip
+*.ods
+.Rhistory
